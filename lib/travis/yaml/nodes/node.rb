@@ -5,7 +5,7 @@ module Travis::Yaml
         false
       end
 
-      attr_accessor :partent
+      attr_accessor :parent
       def initialize(parent)
         @nested_warnings = []
         @parent          = parent
@@ -97,6 +97,63 @@ module Travis::Yaml
       def to_s
         __getobj__.to_s
       end
+
+      def decrypt(&block)
+        each_scalar(SecureString) { |v| v.decrypt(&block) }
+      end
+
+      def encrypt(&block)
+        each_scalar(SecureString) { |v| v.encrypt(&block) }
+      end
+
+      def decrypted?
+        each_scalar(SecureString).all? { |v| v.decrypted? }
+      end
+
+      def encrypted?
+        each_scalar(SecureString).all? { |v| v.encrypted? }
+      end
+
+      def serialize(serializer, options = nil)
+        Serializer[serializer].serialize(self, options)
+      end
+
+      def to_yaml(options = nil)
+        serialize(:yaml, options)
+      end
+
+      def to_json(options = nil)
+        serialize(:json, options)
+      end
+
+      def to_ruby(options = nil)
+        serialize(:ruby, options)
+      end
+
+      def to_legacy_ruby(options = nil)
+        serialize(:legacy, options)
+      end
+
+      def with_value(value)
+        node = dup
+        node.with_value!(value)
+        node
+      end
+
+      def dup
+        super.dup_values
+      end
+
+      protected
+
+        def dup_values
+          self
+        end
+
+        def dup_ivar(name)
+          instance_variable_set(name, instance_variable_get(name).dup)
+        rescue TypeError
+        end
     end
   end
 end

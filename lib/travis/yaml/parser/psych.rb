@@ -119,7 +119,13 @@ module Travis::Yaml
         when SEQ              then node.visit_sequence self, value
         when nil
           if value.children.size == 2 and value.children.first.value == 'secure'
-            node.visit_scalar(self, :secure, value.children.last)
+            secret_value = value.children.last
+            if secret_value.is_a? ::Psych::Nodes::Scalar
+              secret_value.tag ||= '!secure'
+              node.visit_scalar(self, :secure, secret_value, false)
+            else
+              node.visit_unexpected(self, value, "secret value needs to be a string")
+            end
           else
             node.visit_mapping(self, value)
           end
@@ -205,12 +211,12 @@ module Travis::Yaml
       end
 
       def generate_key(node, value)
-        unless value.respond_to? :value and (value.tag.nil? || value.tag == STR)
+        if value.respond_to? :value and (value.tag.nil? || value.tag == STR)
+          value = value.value.to_s
+          value.start_with?(?:) ? value[1..-1] : value
+        else
           node.visit_unexpected(self, value, "expected string as key")
         end
-
-        value = value.value.to_s
-        value.start_with?(?:) ? value[1..-1] : value
       end
     end
   end

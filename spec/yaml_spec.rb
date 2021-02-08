@@ -5,6 +5,13 @@ describe Travis::Yaml do
     Travis::Yaml.parse! ""
   end
 
+  specify :parse do
+    config = Travis::Yaml.parse('env: { secure: foo }') do |yaml|
+      yaml.decrypt { |value| value }
+    end
+    expect(config).to be_decrypted
+  end
+
   describe :new do
     specify 'with block' do
       config = Travis::Yaml.new { |c| c.language = 'php' }
@@ -22,5 +29,21 @@ describe Travis::Yaml do
   specify :inspect do
     config = Travis::Yaml.parse(rvm: ['jruby', '2.0.0'], language: :ruby)
     expect(config.inspect).to be == '#<Travis::Yaml:{"ruby"=>["jruby", "2.0.0"], "language"=>"ruby", "os"=>"linux"}>'
+  end
+
+  context :with_value do
+    subject(:config) { Travis::Yaml.parse(rvm: ['jruby', '2.0.0'], language: :ruby) }
+    
+    example "with_value for language" do
+      changed = config.with_value(language: :php)
+      expect(changed.language) .to be == "php"
+      expect(config.language)  .to be == "ruby"
+    end
+
+    example "with_value for rvm" do
+      changed = config.with_value(rvm: :jruby)
+      expect(changed.rvm) .to be == "jruby"
+      expect(config.rvm)  .to be == ['jruby', '2.0.0']
+    end
   end
 end

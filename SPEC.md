@@ -7,34 +7,76 @@ Note that stricitly speaking Travis CI might not have the same understanding of 
 #### `addons`
 **Expected format:** Key value mapping.
 
+#### `addons.apt_packages`
+**Expected format:** List of strings; or a single string.
+
+#### `addons.artifacts`
+**Expected format:** Key value mapping.
+
+#### `addons.artifacts.branch`
+**Expected format:** String or encrypted string.
+
+#### `addons.artifacts.bucket`
+**This setting is required!**
+
+**Expected format:** String or encrypted string.
+
+#### `addons.artifacts.concurrency`
+**Expected format:** String, integer value or encrypted string.
+
+#### `addons.artifacts.debug`
+**Expected format:** String, integer value or encrypted string.
+
+#### `addons.artifacts.key`
+**This setting is required!**
+
+**Expected format:** String or encrypted string.
+
+#### `addons.artifacts.log_format`
+**Expected format:** String or encrypted string.
+
+#### `addons.artifacts.max_size`
+**Expected format:** String, integer value or encrypted string.
+
+#### `addons.artifacts.paths`
+**Expected format:** List of strings; or a single string.
+
+#### `addons.artifacts.secret`
+**This setting is required!**
+
+**Expected format:** String or encrypted string.
+
+#### `addons.artifacts.target_paths`
+**Expected format:** String or encrypted string.
+
 #### `addons.code_climate`
 **Expected format:** Key value mapping.
 
 #### `addons.code_climate.repo_token`
 **Expected format:** String or encrypted string.
 
-#### `addons.coverty_scan`
+#### `addons.coverity_scan`
 **Expected format:** Key value mapping.
 
-#### `addons.coverty_scan.branch_pattern`
+#### `addons.coverity_scan.branch_pattern`
 **Expected format:** String or encrypted string.
 
-#### `addons.coverty_scan.build_command`
+#### `addons.coverity_scan.build_command`
 **Expected format:** String or encrypted string.
 
-#### `addons.coverty_scan.build_command_prepend`
+#### `addons.coverity_scan.build_command_prepend`
 **Expected format:** String or encrypted string.
 
-#### `addons.coverty_scan.build_script_url`
+#### `addons.coverity_scan.build_script_url`
 **Expected format:** String or encrypted string.
 
-#### `addons.coverty_scan.notification_email`
+#### `addons.coverity_scan.notification_email`
 **Expected format:** String or encrypted string.
 
-#### `addons.coverty_scan.project`
+#### `addons.coverity_scan.project`
 **Expected format:** Key value mapping.
 
-#### `addons.coverty_scan.project.name`
+#### `addons.coverity_scan.project.name`
 **This setting is required!**
 
 **Expected format:** String or encrypted string.
@@ -61,6 +103,9 @@ Note that stricitly speaking Travis CI might not have the same understanding of 
 #### `addons.sauce_connect.username`
 **Expected format:** String or encrypted string.
 
+#### `addons.ssh_known_hosts`
+**Expected format:** List of strings; or a single string.
+
 #### `after_deploy`
 Commands that will be run on the VM.
 
@@ -82,6 +127,26 @@ Commands that will be run on the VM.
 **Expected format:** List of strings; or a single string.
 
 #### `after_success`
+Commands that will be run on the VM.
+
+**Expected format:** List of strings; or a single string.
+
+#### `android`
+**This setting is only relevant if [`language`](#language) is set to `android`.**
+
+**Expected format:** Key value mapping.
+
+#### `android.components`
+List of `components` versions to use.
+
+**Expected format:** List of strings; or a single string.
+
+#### `android.licenses`
+List of `licenses` versions to use.
+
+**Expected format:** List of strings; or a single string.
+
+#### `before_cache`
 Commands that will be run on the VM.
 
 **Expected format:** List of strings; or a single string.
@@ -124,12 +189,21 @@ Commands that will be run on the VM.
 #### `cache.bundler`
 **Expected format:** Boolean value.
 
+#### `cache.ccache`
+**Expected format:** Boolean value.
+
+#### `cache.cocoapods`
+**Expected format:** Boolean value.
+
 #### `cache.directories`
 **Expected format:** List of strings; or a single string.
 
 #### `cache.edge`
 **This setting is experimental and might be removed!**
 
+**Expected format:** Boolean value.
+
+#### `cache.pip`
 **Expected format:** Boolean value.
 
 #### `compiler`
@@ -146,6 +220,27 @@ Value has to be `gcc` (default) or `clang`; or one of the known aliases: `g++` f
 **This setting is only relevant if [`language`](#language) is set to `php`.**
 
 **Expected format:** String.
+
+#### `crystal`
+**This setting is only relevant if [`language`](#language) is set to `crystal`.**
+
+List of `crystal` versions to use.
+
+**Expected format:** List of strings; or a single string.
+
+#### `d`
+**This setting is only relevant if [`language`](#language) is set to `d`.**
+
+List of `d` versions to use.
+
+**Expected format:** List of strings; or a single string.
+
+#### `dart`
+**This setting is only relevant if [`language`](#language) is set to `dart`.**
+
+List of `dart` versions to use.
+
+**Expected format:** List of strings; or a single string.
 
 #### `deploy`
 **Expected format:** List of key value mappings, or strings; or a single key value mapping, or string.
@@ -165,16 +260,16 @@ Value has to be `gcc` (default) or `clang`; or one of the known aliases: `g++` f
 **Expected format:** Boolean value.
 
 #### `deploy[].on`
-**Expected format:** Key value mapping, or string.
+**Expected format:** Key value mapping, or list of strings; or a single string.
 
 #### `deploy[].on.all_branches`
 **Expected format:** Boolean value.
 
 #### `deploy[].on.branch`
-**Expected format:** String.
+**Expected format:** List of strings; or a single string.
 
 #### `deploy[].on.condition`
-**Expected format:** String.
+**Expected format:** List of strings; or a single string.
 
 #### `deploy[].on.jdk`
 **This setting is only relevant if [`language`](#language) is set to `clojure`, `groovy`, `java`, `ruby` (default), `scala` or `android`.**
@@ -235,6 +330,9 @@ Alias for [`deploy[].on.ruby`](#deployonruby).
 
 **Expected format:** String.
 
+#### `dist`
+**Expected format:** String.
+
 #### `env`
 **Expected format:** Key value mapping, or list of strings or encrypted strings.
 
@@ -284,6 +382,16 @@ List of `go` versions to use.
 
 **Expected format:** String.
 
+#### `group`
+**Expected format:** String.
+
+#### `haxe`
+**This setting is only relevant if [`language`](#language) is set to `haxe`.**
+
+List of `haxe` versions to use.
+
+**Expected format:** List of strings; or a single string.
+
 #### `install`
 Commands that will be run on the VM.
 
@@ -299,7 +407,7 @@ List of `jdk` versions to use.
 #### `language`
 **This setting is required!**
 
-Value has to be `c`, `cpp`, `clojure`, `erlang`, `go`, `groovy`, `haskell`, `java`, `node_js`, `objective-c`, `ruby` (default), `python`, `perl`, `php`, `scala` or `android`; or one of the known aliases: `jvm` for `java`, `javascript` for `node_js`, `node` for `node_js`, `nodejs` for `node_js`, `golang` for `go`, `objective_c` for `objective-c`, `obj_c` for `objective-c`, `objc` for `objective-c`, `c++` for `cpp`, `node.js` for `node_js` or `obj-c` for `objective-c`. Setting is not case sensitive.
+Value has to be `c`, `cpp`, `clojure`, `d`, `dart`, `erlang`, `go`, `groovy`, `haskell`, `haxe`, `java`, `node_js`, `objective-c`, `ruby` (default), `rust`, `python`, `perl`, `php`, `scala`, `android`, `crystal`, `csharp`, `smalltalk` or `generic`; or one of the known aliases: `dartlang` for `dart`, `jvm` for `java`, `javascript` for `node_js`, `node` for `node_js`, `nodejs` for `node_js`, `golang` for `go`, `objective_c` for `objective-c`, `obj_c` for `objective-c`, `objc` for `objective-c`, `c++` for `cpp`, `node.js` for `node_js`, `obj-c` for `objective-c`, `bash` for `generic`, `sh` for `generic` or `shell` for `generic`. Setting is not case sensitive.
 
 **Expected format:** String.
 
@@ -326,6 +434,27 @@ Value has to be `gcc` (default) or `clang`; or one of the known aliases: `g++` f
 
 **Expected format:** String.
 
+#### `matrix.allow_failures[].crystal`
+**This setting is only relevant if [`language`](#language) is set to `crystal`.**
+
+`crystal` version to use.
+
+**Expected format:** String.
+
+#### `matrix.allow_failures[].d`
+**This setting is only relevant if [`language`](#language) is set to `d`.**
+
+`d` version to use.
+
+**Expected format:** String.
+
+#### `matrix.allow_failures[].dart`
+**This setting is only relevant if [`language`](#language) is set to `dart`.**
+
+`dart` version to use.
+
+**Expected format:** String.
+
 #### `matrix.allow_failures[].env`
 **Expected format:** String or encrypted string.
 
@@ -347,6 +476,13 @@ Gemfile to use.
 **This setting is only relevant if [`language`](#language) is set to `go`.**
 
 `go` version to use.
+
+**Expected format:** String.
+
+#### `matrix.allow_failures[].haxe`
+**This setting is only relevant if [`language`](#language) is set to `haxe`.**
+
+`haxe` version to use.
 
 **Expected format:** String.
 
@@ -420,6 +556,13 @@ Alias for [`matrix.allow_failures[].otp_release`](#matrixallow_failuresotp_relea
 #### `matrix.allow_failures[].rvm`
 Alias for [`matrix.allow_failures[].ruby`](#matrixallow_failuresruby).
 
+#### `matrix.allow_failures[].smalltalk`
+**This setting is only relevant if [`language`](#language) is set to `smalltalk`.**
+
+`smalltalk` version to use.
+
+**Expected format:** String.
+
 #### `matrix.allow_failures[].xcode_scheme`
 **This setting is only relevant if [`language`](#language) is set to `objective-c`.**
 
@@ -447,6 +590,27 @@ Value has to be `gcc` (default) or `clang`; or one of the known aliases: `g++` f
 
 **Expected format:** String.
 
+#### `matrix.exclude[].crystal`
+**This setting is only relevant if [`language`](#language) is set to `crystal`.**
+
+`crystal` version to use.
+
+**Expected format:** String.
+
+#### `matrix.exclude[].d`
+**This setting is only relevant if [`language`](#language) is set to `d`.**
+
+`d` version to use.
+
+**Expected format:** String.
+
+#### `matrix.exclude[].dart`
+**This setting is only relevant if [`language`](#language) is set to `dart`.**
+
+`dart` version to use.
+
+**Expected format:** String.
+
 #### `matrix.exclude[].env`
 **Expected format:** String or encrypted string.
 
@@ -468,6 +632,13 @@ Gemfile to use.
 **This setting is only relevant if [`language`](#language) is set to `go`.**
 
 `go` version to use.
+
+**Expected format:** String.
+
+#### `matrix.exclude[].haxe`
+**This setting is only relevant if [`language`](#language) is set to `haxe`.**
+
+`haxe` version to use.
 
 **Expected format:** String.
 
@@ -541,6 +712,13 @@ Alias for [`matrix.exclude[].otp_release`](#matrixexcludeotp_release).
 #### `matrix.exclude[].rvm`
 Alias for [`matrix.exclude[].ruby`](#matrixexcluderuby).
 
+#### `matrix.exclude[].smalltalk`
+**This setting is only relevant if [`language`](#language) is set to `smalltalk`.**
+
+`smalltalk` version to use.
+
+**Expected format:** String.
+
 #### `matrix.exclude[].xcode_scheme`
 **This setting is only relevant if [`language`](#language) is set to `objective-c`.**
 
@@ -571,6 +749,27 @@ Value has to be `gcc` (default) or `clang`; or one of the known aliases: `g++` f
 
 **Expected format:** String.
 
+#### `matrix.include[].crystal`
+**This setting is only relevant if [`language`](#language) is set to `crystal`.**
+
+`crystal` version to use.
+
+**Expected format:** String.
+
+#### `matrix.include[].d`
+**This setting is only relevant if [`language`](#language) is set to `d`.**
+
+`d` version to use.
+
+**Expected format:** String.
+
+#### `matrix.include[].dart`
+**This setting is only relevant if [`language`](#language) is set to `dart`.**
+
+`dart` version to use.
+
+**Expected format:** String.
+
 #### `matrix.include[].env`
 **Expected format:** String or encrypted string.
 
@@ -592,6 +791,13 @@ Gemfile to use.
 **This setting is only relevant if [`language`](#language) is set to `go`.**
 
 `go` version to use.
+
+**Expected format:** String.
+
+#### `matrix.include[].haxe`
+**This setting is only relevant if [`language`](#language) is set to `haxe`.**
+
+`haxe` version to use.
 
 **Expected format:** String.
 
@@ -665,6 +871,13 @@ Alias for [`matrix.include[].otp_release`](#matrixincludeotp_release).
 #### `matrix.include[].rvm`
 Alias for [`matrix.include[].ruby`](#matrixincluderuby).
 
+#### `matrix.include[].smalltalk`
+**This setting is only relevant if [`language`](#language) is set to `smalltalk`.**
+
+`smalltalk` version to use.
+
+**Expected format:** String.
+
 #### `matrix.include[].xcode_scheme`
 **This setting is only relevant if [`language`](#language) is set to `objective-c`.**
 
@@ -720,7 +933,7 @@ Value has to be `always`, `never` or `change`. Setting is case sensitive.
 **Expected format:** List of strings or encrypted strings; or a single string or encrypted string.
 
 #### `notifications.campfire.template`
-Strings will be interpolated. Available variables: `%{repository_slug}`, `%{repository_name}`, `%{repository}`, `%{build_number}`, `%{branch}`, `%{commit}`, `%{author}`, `%{message}`, `%{duration}`, `%{compare_url}`, `%{build_url}`.
+Strings will be interpolated. Available variables: `%{repository}`, `%{repository_slug}`, `%{repository_name}`, `%{build_number}`, `%{build_id}`, `%{pull_request}`, `%{pull_request_number}`, `%{branch}`, `%{commit}`, `%{author}`, `%{commit_subject}`, `%{commit_message}`, `%{result}`, `%{duration}`, `%{message}`, `%{compare_url}`, `%{build_url}`, `%{pull_request_url}`.
 
 **Expected format:** List of strings; or a single string.
 
@@ -766,29 +979,29 @@ Value has to be `always`, `never` or `change`. Setting is case sensitive.
 #### `notifications.email.recipients`
 **Expected format:** List of strings or encrypted strings; or a single string or encrypted string.
 
-#### `notifications.flowdoc`
+#### `notifications.flowdock`
 **Expected format:** Key value mapping, or string, encrypted string, or boolean value.
 
-#### `notifications.flowdoc.api_token`
+#### `notifications.flowdock.api_token`
 **Expected format:** String or encrypted string.
 
-#### `notifications.flowdoc.disabled`
+#### `notifications.flowdock.disabled`
 **Expected format:** Boolean value.
 
-#### `notifications.flowdoc.enabled`
+#### `notifications.flowdock.enabled`
 **Expected format:** Boolean value.
 
-#### `notifications.flowdoc.on_failure`
+#### `notifications.flowdock.on_failure`
 Value has to be `always`, `never` or `change`. Setting is case sensitive.
 
 **Expected format:** String.
 
-#### `notifications.flowdoc.on_start`
+#### `notifications.flowdock.on_start`
 Value has to be `always`, `never` or `change`. Setting is case sensitive.
 
 **Expected format:** String.
 
-#### `notifications.flowdoc.on_success`
+#### `notifications.flowdock.on_success`
 Value has to be `always`, `never` or `change`. Setting is case sensitive.
 
 **Expected format:** String.
@@ -826,7 +1039,7 @@ Value has to be `always`, `never` or `change`. Setting is case sensitive.
 **Expected format:** List of strings or encrypted strings; or a single string or encrypted string.
 
 #### `notifications.hipchat.template`
-Strings will be interpolated. Available variables: `%{repository_slug}`, `%{repository_name}`, `%{repository}`, `%{build_number}`, `%{branch}`, `%{commit}`, `%{author}`, `%{message}`, `%{duration}`, `%{compare_url}`, `%{build_url}`.
+Strings will be interpolated. Available variables: `%{repository}`, `%{repository_slug}`, `%{repository_name}`, `%{build_number}`, `%{build_id}`, `%{pull_request}`, `%{pull_request_number}`, `%{branch}`, `%{commit}`, `%{author}`, `%{commit_subject}`, `%{commit_message}`, `%{result}`, `%{duration}`, `%{message}`, `%{compare_url}`, `%{build_url}`, `%{pull_request_url}`.
 
 **Expected format:** List of strings; or a single string.
 
@@ -888,7 +1101,7 @@ Value has to be `always`, `never` or `change`. Setting is case sensitive.
 **Expected format:** Boolean value.
 
 #### `notifications.irc.template`
-Strings will be interpolated. Available variables: `%{repository_slug}`, `%{repository_name}`, `%{repository}`, `%{build_number}`, `%{branch}`, `%{commit}`, `%{author}`, `%{message}`, `%{duration}`, `%{compare_url}`, `%{build_url}`.
+Strings will be interpolated. Available variables: `%{repository}`, `%{repository_slug}`, `%{repository_name}`, `%{build_number}`, `%{build_id}`, `%{pull_request}`, `%{pull_request_number}`, `%{branch}`, `%{commit}`, `%{author}`, `%{commit_subject}`, `%{commit_message}`, `%{result}`, `%{duration}`, `%{message}`, `%{compare_url}`, `%{build_url}`, `%{pull_request_url}`.
 
 **Expected format:** List of strings; or a single string.
 
@@ -909,6 +1122,41 @@ Strings will be interpolated. Available variables: `%{repository_slug}`, `%{repo
 
 #### `notifications.irc.use_notice`
 **Expected format:** Boolean value.
+
+#### `notifications.pushover`
+**Expected format:** Key value mapping, or list of strings or encrypted strings, or boolean value.
+
+#### `notifications.pushover.api_key`
+**Expected format:** String or encrypted string.
+
+#### `notifications.pushover.disabled`
+**Expected format:** Boolean value.
+
+#### `notifications.pushover.enabled`
+**Expected format:** Boolean value.
+
+#### `notifications.pushover.on_failure`
+Value has to be `always`, `never` or `change`. Setting is case sensitive.
+
+**Expected format:** String.
+
+#### `notifications.pushover.on_start`
+Value has to be `always`, `never` or `change`. Setting is case sensitive.
+
+**Expected format:** String.
+
+#### `notifications.pushover.on_success`
+Value has to be `always`, `never` or `change`. Setting is case sensitive.
+
+**Expected format:** String.
+
+#### `notifications.pushover.template`
+Strings will be interpolated. Available variables: `%{repository}`, `%{repository_slug}`, `%{repository_name}`, `%{build_number}`, `%{build_id}`, `%{pull_request}`, `%{pull_request_number}`, `%{branch}`, `%{commit}`, `%{author}`, `%{commit_subject}`, `%{commit_message}`, `%{result}`, `%{duration}`, `%{message}`, `%{compare_url}`, `%{build_url}`, `%{pull_request_url}`.
+
+**Expected format:** List of strings; or a single string.
+
+#### `notifications.pushover.users`
+**Expected format:** List of strings or encrypted strings; or a single string or encrypted string.
 
 #### `notifications.slack`
 **Expected format:** Key value mapping, or list of strings or encrypted strings, or boolean value.
@@ -938,7 +1186,7 @@ Value has to be `always`, `never` or `change`. Setting is case sensitive.
 **Expected format:** List of strings or encrypted strings; or a single string or encrypted string.
 
 #### `notifications.slack.template`
-Strings will be interpolated. Available variables: `%{repository_slug}`, `%{repository_name}`, `%{repository}`, `%{build_number}`, `%{branch}`, `%{commit}`, `%{author}`, `%{message}`, `%{duration}`, `%{compare_url}`, `%{build_url}`.
+Strings will be interpolated. Available variables: `%{repository}`, `%{repository_slug}`, `%{repository_name}`, `%{build_number}`, `%{build_id}`, `%{pull_request}`, `%{pull_request_number}`, `%{branch}`, `%{commit}`, `%{author}`, `%{commit_subject}`, `%{commit_message}`, `%{result}`, `%{duration}`, `%{message}`, `%{compare_url}`, `%{build_url}`, `%{pull_request_url}`.
 
 **Expected format:** List of strings; or a single string.
 
@@ -985,7 +1233,7 @@ Value has to be `always`, `never` or `change`. Setting is case sensitive.
 **Expected format:** List of strings or encrypted strings; or a single string or encrypted string.
 
 #### `notifications.sqwiggle.template`
-Strings will be interpolated. Available variables: `%{repository_slug}`, `%{repository_name}`, `%{repository}`, `%{build_number}`, `%{branch}`, `%{commit}`, `%{author}`, `%{message}`, `%{duration}`, `%{compare_url}`, `%{build_url}`.
+Strings will be interpolated. Available variables: `%{repository}`, `%{repository_slug}`, `%{repository_name}`, `%{build_number}`, `%{build_id}`, `%{pull_request}`, `%{pull_request_number}`, `%{branch}`, `%{commit}`, `%{author}`, `%{commit_subject}`, `%{commit_message}`, `%{result}`, `%{duration}`, `%{message}`, `%{compare_url}`, `%{build_url}`, `%{pull_request_url}`.
 
 **Expected format:** List of strings; or a single string.
 
@@ -1078,6 +1326,11 @@ List of `php` versions to use.
 
 **Expected format:** List of strings; or a single string.
 
+#### `podfile`
+`podfile` version to use.
+
+**Expected format:** String.
+
 #### `python`
 **This setting is only relevant if [`language`](#language) is set to `python`.**
 
@@ -1095,13 +1348,13 @@ List of `ruby` versions to use.
 #### `rvm`
 Alias for [`ruby`](#ruby).
 
-#### `script`
-Commands that will be run on the VM.
+#### `scala`
+List of `scala` versions to use.
 
 **Expected format:** List of strings; or a single string.
 
-#### `sdk_components`
-**This setting is only relevant if [`language`](#language) is set to `android`.**
+#### `script`
+Commands that will be run on the VM.
 
 **Expected format:** List of strings; or a single string.
 
@@ -1110,8 +1363,18 @@ List of `services` versions to use.
 
 **Expected format:** List of strings; or a single string.
 
+#### `smalltalk`
+**This setting is only relevant if [`language`](#language) is set to `smalltalk`.**
+
+List of `smalltalk` versions to use.
+
+**Expected format:** List of strings; or a single string.
+
 #### `source_key`
 **Expected format:** String or encrypted string.
+
+#### `sudo`
+**Expected format:** Boolean value.
 
 #### `virtual_env`
 Alias for [`virtualenv`](#virtualenv).

@@ -36,7 +36,26 @@ module Travis::Yaml
       end
 
       class Template < Sequence
-        VARIABLES = %w[repository_slug repository_name repository build_number branch commit author message duration compare_url build_url]
+        VARIABLES = %w[
+          repository
+          repository_slug
+          repository_name
+          build_number
+          build_id
+          pull_request
+          pull_request_number
+          branch
+          commit
+          author
+          commit_subject
+          commit_message
+          result
+          duration
+          message
+          compare_url
+          build_url
+          pull_request_url
+        ]
 
         def verify
           super
@@ -59,22 +78,28 @@ module Travis::Yaml
         map :use_notice, :skip_join, to: Scalar[:bool]
       end
 
+      class Pushover < WithTemplate
+        list :users
+        map :api_key, to: Scalar[:str, :secure]
+      end
+
       class Hipchat < WithTemplate
         map :format, to: FixedValue[:html, :text]
         list :rooms
       end
 
-      class Flowdoc < Notification
+      class Flowdock < Notification
         map :api_token, to: Scalar[:str, :secure]
-        prefix_scalar name, :str, :secure
+        prefix_scalar :api_token, :str, :secure
       end
 
       map :webhooks,                    to: Notification[:urls]
       map :email,                       to: Notification[:recipients]
       map :sqwiggle, :slack, :campfire, to: WithTemplate[:rooms]
-      map :flowdoc,                     to: Flowdoc
+      map :flowdock,                    to: Flowdock
       map :hipchat,                     to: Hipchat
       map :irc,                         to: IRC
+      map :pushover,                    to: Pushover
       map :webhook,                     to: :webhooks
     end
   end

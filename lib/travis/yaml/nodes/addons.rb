@@ -11,7 +11,7 @@ module Travis::Yaml
         end
       end
 
-      class CovertyScan < Addon
+      class CoverityScan < Addon
         class Project < Mapping
           map :name, to: Scalar[:str, :secure], required: true
         end
@@ -21,12 +21,25 @@ module Travis::Yaml
           :build_command_prepend, to: Scalar[:str, :secure]
       end
 
-      map :code_climate,  to: Addon[:repo_token], drop_empty: false
-      map :coverty_scan,  to: CovertyScan
-      map :firefox,       to: Version
-      map :hosts,         to: Sequence
-      map :postgresql,    to: Version
-      map :sauce_connect, to: Addon[:username, :access_key], drop_empty: false
+      class Artifacts < Addon
+        map :bucket,       to: Scalar[:str, :secure], required: true
+        map :key,          to: Scalar[:str, :secure], required: true
+        map :paths,        to: Sequence
+        map :secret,       to: Scalar[:str, :secure], required: true
+
+        map :branch, :log_format, :target_paths, to: Scalar[:str, :secure]
+        map :debug, :concurrency, :max_size, to: Scalar[:str, :int, :secure]
+      end
+
+      map :artifacts,       to: Artifacts, drop_empty: false
+      map :code_climate,    to: Addon[:repo_token], drop_empty: false
+      map :coverity_scan,   to: CoverityScan
+      map :firefox,         to: Version
+      map :hosts,           to: Sequence
+      map :postgresql,      to: Version
+      map :sauce_connect,   to: Addon[:username, :access_key], drop_empty: false
+      map :ssh_known_hosts, to: Sequence
+      map :apt_packages,    to: Sequence
     end
   end
 end

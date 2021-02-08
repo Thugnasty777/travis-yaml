@@ -3,30 +3,26 @@ require 'delegate'
 module Travis::Yaml
   class Matrix < DelegateClass(Array)
     EXPAND_KEYS = [
-      :compiler, :gemfile, :ghc, :go, :jdk, :lein, :node_js, :otp_release,
-      :perl, :php, :python, :ruby, :scala, :xcode_scheme, :xcode_sdk, :os
+      :compiler, :crystal, :d, :dart, :gemfile, :ghc, :go, :haxe, :jdk, :lein,
+      :node_js, :otp_release, :perl, :php, :python, :ruby, :scala, :xcode_scheme,
+      :xcode_sdk, :os , :smalltalk
     ]
 
     KEYS = EXPAND_KEYS + [:env]
 
     class Entry < DelegateClass(Nodes::Root)
-      attr_reader :env, :matrix_attributes
-
+      attr_reader :matrix_attributes
       def initialize(root, matrix_attributes)
-        super(root)
-
-        @matrix_attributes = matrix_attributes
-        @env               = Nodes::Env.new(self)
-        inherited_env      = root.env.global if root.env
-        @env.global        = [matrix_attributes[:env], *inherited_env].compact
-      end
-
-      EXPAND_KEYS.each do |key|
-        define_method(key) { @matrix_attributes.fetch(key, super()) }
-      end
-
-      def inspect
-        "#<#{self.class}: #{matrix_attributes}>"
+        @matrix_attributes   = matrix_attributes
+        normal_attributes    = matrix_attributes.select { |key| key != :env }
+        generated_root       = root.with_value(normal_attributes)
+        if matrix_attributes[:env]
+          generated_root.env.global = Travis::Yaml::Nodes::Env::List.new(generated_root.env)
+          generated_root.env.global.add_value! root.env.global if root.env.global
+          generated_root.env.global.add_value! matrix_attributes[:env]
+          generated_root.env.mapping.delete "matrix"
+        end
+        super(generated_root)
       end
     end
 
@@ -53,7 +49,7 @@ module Travis::Yaml
           m.include.each { |i| entries << Hash[axes.map { |k| [k, i[k]] }] } if m.include
         end
         entries.map! { |attributes| Entry.new(root, attributes) }
-        entries.any? ? entries : [root]
+        entries.any? ? entries : [Entry.new(root, {})]
       end
     end
 

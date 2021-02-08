@@ -7,17 +7,20 @@ module Travis
     require 'travis/yaml/nodes'
     require 'travis/yaml/matrix'
     require 'travis/yaml/parser'
+    require 'travis/yaml/serializer'
 
     extend self
 
     def parse(value)
-      Parser.parse(value)
+      result = Parser.parse(value)
+      yield result if block_given?
+      result
     end
 
     alias_method :load, :parse
 
-    def parse!(value, file_name = '.travis.yml')
-      result = parse(value)
+    def parse!(value, file_name = '.travis.yml', &block)
+      result = parse(value, &block)
       result.nested_warnings.each do |key, message|
         warn key.empty? ? "#{file_name}: #{message}" :
           "#{file_name}: #{key.join(?.)} section - #{message}"

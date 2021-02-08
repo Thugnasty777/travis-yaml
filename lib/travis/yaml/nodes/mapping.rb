@@ -94,6 +94,7 @@ module Travis::Yaml
 
       def visit_key_value(visitor, key, value)
         return warning("unexpected key %p, dropping", key) unless node = subnode_for(key)
+        warning("has multiple %p entries, keeping last entry", key) if self[key]
         self[key] = node
         visitor.accept(node, value)
       end
@@ -103,12 +104,12 @@ module Travis::Yaml
       end
 
       def []=(key, value)
-        if key = mapped_key(key)
+        if mapped_key = mapped_key(key)
           unless value.is_a? Node
-            node  = subnode_for(key)
+            node  = subnode_for(mapped_key)
             value = node if Parser::Ruby.new(value).parse(node)
           end
-          @mapping[key] = value
+          @mapping[mapped_key] = value
         else
           warning("unexpected key %p, dropping", key)
         end
@@ -209,6 +210,24 @@ module Travis::Yaml
           list = value.nested_warnings(*prefix, key) + list
         end
       end
+
+      def with_value!(value)
+        value = value.mapping while value.is_a? Mapping
+        value.each { |key, value| self[key] = value }
+      end
+
+      def each_scalar(type = nil, &block)
+        return enum_for(:each_scalar, type) unless block
+        @mapping.each_value { |v| v.each_scalar(type, &block) }
+      end
+
+      protected
+
+        def dup_values
+          duped_mapping = @mapping.map { |key, value| [key.dup, value.dup] }
+          @mapping      = Hash[duped_mapping]
+          self
+        end
     end
   end
 end

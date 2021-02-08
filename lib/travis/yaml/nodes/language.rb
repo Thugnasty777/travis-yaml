@@ -4,14 +4,17 @@ module Travis::Yaml
       ignore_case
       default :ruby
 
-      value :c, :cpp, :clojure, :erlang, :go, :groovy, :haskell, :java, :node_js,
-            :"objective-c", :ruby, :python, :perl, :php, :scala, :android
-      value jvm: :java, javascript: :node_js, node: :node_js, nodejs: :node_js, golang: :go,
-            objective_c: :"objective-c", obj_c: :"objective-c", objc: :"objective-c"
+      value :c, :cpp, :clojure, :d, :dart, :erlang, :go, :groovy, :haskell, :haxe, :java,
+            :node_js, :"objective-c", :ruby, :rust, :python, :perl, :php, :scala,
+            :android, :crystal, :csharp, :smalltalk
+      value dartlang: :dart, jvm: :java, javascript: :node_js, node: :node_js,
+            nodejs: :node_js, golang: :go, objective_c: :"objective-c",
+            obj_c: :"objective-c", objc: :"objective-c"
       value "c++" => :cpp, "node.js" => :node_js, "obj-c" => :"objective-c"
+      value :generic, bash: :generic, sh: :generic, shell: :generic, minimal: :generic
 
       def default_os
-        value == "objective-c" ? :osx : OSEntry.default
+        value == "objective-c" ? "osx" : OSEntry.default
       end
     end
   end
