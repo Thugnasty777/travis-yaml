@@ -7,17 +7,17 @@ describe Travis::Yaml::Nodes::Addons do
     context 'artifacts' do
       let :config do
         addons(artifacts: {
-          bucket:       'whatever',
-          branch:       'borken',
-          concurrency:  40,
-          debug:        1,
-          key:          'foo',
-          max_size:     1024 * 1024 * 10,
-          paths:        '$(git ls-files -o | tr "\n" ":")',
-          secret:       'bar',
-          target_paths: 'somewhere/in/teh/clood',
-          log_format:   'special',
-        })
+                 bucket: 'whatever',
+                 branch: 'borken',
+                 concurrency: 40,
+                 debug: 1,
+                 key: 'foo',
+                 max_size: 1024 * 1024 * 10,
+                 paths: '$(git ls-files -o | tr "\n" ":")',
+                 secret: 'bar',
+                 target_paths: 'somewhere/in/teh/clood',
+                 log_format: 'special'
+               })
       end
 
       example { expect(config.artifacts.key).to be == 'foo' }
@@ -27,13 +27,13 @@ describe Travis::Yaml::Nodes::Addons do
 
     context 'code_climate' do
       example { expect(addons(code_climate: true).code_climate).to be == {} }
-      example { expect(addons(code_climate: { repo_token: "foo" }).code_climate.repo_token).to be == "foo" }
+      example { expect(addons(code_climate: { repo_token: 'foo' }).code_climate.repo_token).to be == 'foo' }
     end
 
     context 'coverity_scan' do
       example do
         config = addons(coverity_scan: { project: { name: :foo } })
-        expect(config.coverity_scan.project.name).to be == "foo"
+        expect(config.coverity_scan.project.name).to be == 'foo'
       end
     end
 
@@ -52,17 +52,21 @@ describe Travis::Yaml::Nodes::Addons do
 
     context 'sauce_connect' do
       example { expect(addons(sauce_connect: true).sauce_connect).to be == {} }
-      example { expect(addons(sauce_connect: { username: "foo" }).sauce_connect.username).to be == "foo" }
+      example { expect(addons(sauce_connect: { username: 'foo' }).sauce_connect.username).to be == 'foo' }
     end
 
     context 'ssh_known_hosts' do
       example { expect(addons(ssh_known_hosts: 'git.example.org').ssh_known_hosts).to be == ['git.example.org'] }
-      example { expect(addons(ssh_known_hosts: ['git.example.org', 'git.example.com']).ssh_known_hosts).to be == ['git.example.org', 'git.example.com'] }
+      example do
+        expect(addons(ssh_known_hosts: ['git.example.org',
+                                        'git.example.com']).ssh_known_hosts).to be == ['git.example.org',
+                                                                                       'git.example.com']
+      end
     end
 
     context 'apt_packages' do
       example { expect(addons(apt_packages: 'curl').apt_packages).to be == ['curl'] }
-      example { expect(addons(apt_packages: ['curl', 'git']).apt_packages).to be == ['curl', 'git'] }
+      example { expect(addons(apt_packages: %w[curl git]).apt_packages).to be == %w[curl git] }
     end
   end
 end

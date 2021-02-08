@@ -7,7 +7,7 @@ module Travis::Yaml
         cast :str, :secure
 
         def visit_mapping(visitor, value)
-          self.value = ""
+          self.value = ''
           visitor.apply_mapping(self, value)
         end
 
@@ -17,9 +17,9 @@ module Travis::Yaml
           visitor.accept(node, value)
 
           if node.errors?
-            warning "dropping %p: %s", key, value.errors.join(', ')
+            warning 'dropping %p: %s', key, value.errors.join(', ')
           else
-            self.value << " " unless self.value.empty?
+            self.value << ' ' unless self.value.empty?
             self.value << "#{key}=#{Shellwords.escape(value.value)}"
           end
         end

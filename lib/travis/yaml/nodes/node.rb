@@ -6,6 +6,7 @@ module Travis::Yaml
       end
 
       attr_accessor :parent
+
       def initialize(parent)
         @nested_warnings = []
         @parent          = parent
@@ -48,49 +49,47 @@ module Travis::Yaml
         errors << message % params
       end
 
-      def prepare
-      end
+      def prepare; end
 
-      def verify
-      end
+      def verify; end
 
-      def verify_language(language)
-      end
+      def verify_language(language); end
 
       def deep_verify
         verify
       end
 
-      def visit_unexpected(visitor, value, message = nil)
-        error(message || "unexpected %p", value)
+      def visit_unexpected(_visitor, value, message = nil)
+        error(message || 'unexpected %p', value)
       end
 
-      def visit_mapping(visitor, value)
-        error("unexpected mapping")
+      def visit_mapping(_visitor, _value)
+        error('unexpected mapping')
       end
 
-      def visit_pair(visitor, key, value)
-        error("unexpected pair")
+      def visit_pair(_visitor, _key, _value)
+        error('unexpected pair')
       end
 
-      def visit_scalar(visitor, type, value, implicit = true)
-        error("unexpected scalar") unless type == :null
+      def visit_scalar(_visitor, type, _value, _implicit = true)
+        error('unexpected scalar') unless type == :null
       end
 
-      def visit_sequence(visitor, value)
-        error("unexpected sequence")
+      def visit_sequence(_visitor, _value)
+        error('unexpected sequence')
       end
 
-      def visit_child(visitor, value)
-        error("unexpected child")
+      def visit_child(_visitor, _value)
+        error('unexpected child')
       end
 
-      def respond_to_missing?(method, include_private = false)
+      def respond_to_missing?(method, _include_private = false)
         __getobj__.respond_to?(method, false)
       end
 
       def method_missing(method, *args, &block)
         return super unless __getobj__.respond_to?(method)
+
         __getobj__.public_send(method, *args, &block)
       end
 
@@ -146,14 +145,14 @@ module Travis::Yaml
 
       protected
 
-        def dup_values
-          self
-        end
+      def dup_values
+        self
+      end
 
-        def dup_ivar(name)
-          instance_variable_set(name, instance_variable_get(name).dup)
-        rescue TypeError
-        end
+      def dup_ivar(name)
+        instance_variable_set(name, instance_variable_get(name).dup)
+      rescue TypeError
+      end
     end
   end
 end

@@ -1,12 +1,14 @@
 module Travis::Yaml
   module Serializer
     class Yaml < Ruby
-      PSYCH_OPTIONS = [ :indentation, :line_width, :canonical ]
+      PSYCH_OPTIONS = %i[indentation line_width canonical]
 
       class Tagged
         attr_accessor :tag, :value
+
         def initialize(tag, value)
-          @tag, @value = tag, value
+          @tag = tag
+          @value = value
         end
 
         def encode_with(coder)
@@ -25,7 +27,7 @@ module Travis::Yaml
 
       def serialize_encrypted(value)
         value = value.encrypted_string
-        avoid_tags? ? { "secure" => value } : Tagged.new('!encrypted', value)
+        avoid_tags? ? { 'secure' => value } : Tagged.new('!encrypted', value)
       end
 
       def serialize_decrypted(value)

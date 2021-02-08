@@ -1,4 +1,4 @@
-unless defined? RUBY_ENGINE and RUBY_ENGINE == 'jruby'
+unless defined? RUBY_ENGINE && (RUBY_ENGINE == 'jruby')
   require 'simplecov'
   SimpleCov.formatter = SimpleCov::Formatter::HTMLFormatter
 

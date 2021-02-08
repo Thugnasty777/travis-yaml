@@ -1,8 +1,8 @@
 describe Travis::Yaml::Nodes::Stage do
-  stages = [:before_install, :install, :before_script, :script, :after_result, :before_cache, 
-            :after_script, :after_success, :after_failure, :before_deploy, :after_deploy]
+  stages = %i[before_install install before_script script after_result before_cache
+              after_script after_success after_failure before_deploy after_deploy]
 
-  shared_examples "a stage" do
+  shared_examples 'a stage' do
     specify 'with one entry' do
       config = Travis::Yaml.load(stage => 'rake')
       expect(config[stage]).to be == ['rake']
@@ -20,7 +20,7 @@ describe Travis::Yaml::Nodes::Stage do
     end
 
     specify 'no warnings if missing' do
-      config = Travis::Yaml.load(language: "ruby")
+      config = Travis::Yaml.load(language: 'ruby')
       expect(config.warnings).to be_empty
     end
   end
@@ -28,7 +28,7 @@ describe Travis::Yaml::Nodes::Stage do
   stages.each do |stage|
     describe stage do
       let(:stage) { stage }
-      include_examples "a stage"
+      include_examples 'a stage'
     end
   end
 end

@@ -2,8 +2,10 @@ module Travis::Yaml
   module Nodes
     def self.[](key)
       return key if key.respond_to? :new
+
       name = constants.detect { |c| c.downcase == key }
-      raise ArgumentError, "unknown node type %p" % key unless name
+      raise ArgumentError, 'unknown node type %p' % key unless name
+
       const_get(name)
     end
 

@@ -104,7 +104,7 @@ describe Travis::Yaml::SecureString do
   end
 
   specify 'secure cannot be a key in an open mapping' do
-    config = Travis::Yaml.load <<-YAML.gsub(/^      /, "")
+    config = Travis::Yaml.load <<-YAML.gsub(/^      /, '')
       language: python
       python:
         - 2.7
@@ -124,7 +124,7 @@ describe Travis::Yaml::SecureString do
   end
 
   specify 'secure cannot be nested' do
-    config = Travis::Yaml.load <<-YAML.gsub(/^      /, "")
+    config = Travis::Yaml.load <<-YAML.gsub(/^      /, '')
       language: python
       python:
         - 2.7

@@ -6,7 +6,7 @@ module Travis::Yaml
     class Psych
       class SetNode < DelegateClass(::Psych::Nodes::Mapping)
         def children
-          super.select.with_index { |_,i| i.even? }
+          super.select.with_index { |_, i| i.even? }
         end
       end
 
@@ -34,15 +34,15 @@ module Travis::Yaml
       SECURE    = /\A!(?:encrypted|secure|decrypted)\z/
       TRUE      = /\A(?:y|Y|yes|Yes|YES|true|True|TRUE|on|On|ON)\z/
       FALSE     = /\A(?:n|N|no|No|NO|false|False|FALSE|off|Off|OFF)\z/
-      REGEXP    = /\A!(?:ruby\/)?regexp\z/
+      REGEXP    = %r{\A!(?:ruby/)?regexp\z}
       REG_FLAGS = { 'i' => Regexp::IGNORECASE, 'm' => Regexp::MULTILINE, 'x' => Regexp::EXTENDED }
       FORMATS   = {
-        '!bool'      => Regexp.union(TRUE, FALSE),
-        '!float'     => ::Psych::ScalarScanner::FLOAT,
-        '!null'      => /\A(:?~|null|Null|NULL|)\z/,
+        '!bool' => Regexp.union(TRUE, FALSE),
+        '!float' => ::Psych::ScalarScanner::FLOAT,
+        '!null' => /\A(:?~|null|Null|NULL|)\z/,
         '!timestamp' => ::Psych::ScalarScanner::TIME,
-        '!int'       => ::Psych::ScalarScanner::INTEGER,
-        '!regexp'    => /\A\/(.*)\/([imx]*)\z/
+        '!int' => ::Psych::ScalarScanner::INTEGER,
+        '!regexp' => %r{\A/(.*)/([imx]*)\z}
       }
 
       if defined? ::Psych::ClassLoader
@@ -58,8 +58,9 @@ module Travis::Yaml
 
       def self.parses?(value)
         return true if value.is_a?(::Psych::Nodes::Node)
-        return true if value.is_a?(String) or value.is_a?(IO)
-        return true if defined?(StringIO) and value.is_a?(StringIO)
+        return true if value.is_a?(String) || value.is_a?(IO)
+        return true if defined?(StringIO) && value.is_a?(StringIO)
+
         value.respond_to?(:to_str) or value.respond_to?(:to_io)
       end
 
@@ -80,10 +81,10 @@ module Travis::Yaml
         parsed ||= ::Psych.parse(@value)
         accept(root, parsed)
         root
-      rescue ::Psych::SyntaxError => error
+      rescue ::Psych::SyntaxError => e
         root.verify
         root.warnings.clear
-        root.error("syntax error: %s", error.message)
+        root.error('syntax error: %s', e.message)
         root
       end
 
@@ -118,19 +119,19 @@ module Travis::Yaml
         when SET              then node.visit_sequence self, SetNode.new(value)
         when SEQ              then node.visit_sequence self, value
         when nil
-          if value.children.size == 2 and value.children.first.value == 'secure'
+          if (value.children.size == 2) && (value.children.first.value == 'secure')
             secret_value = value.children.last
             if secret_value.is_a? ::Psych::Nodes::Scalar
               secret_value.tag ||= '!secure'
               node.visit_scalar(self, :secure, secret_value, false)
             else
-              node.visit_unexpected(self, value, "secret value needs to be a string")
+              node.visit_unexpected(self, value, 'secret value needs to be a string')
             end
           else
             node.visit_mapping(self, value)
           end
         else
-          node.visit_unexpected self, value, "unexpected tag %p for mapping" % value.tag
+          node.visit_unexpected self, value, 'unexpected tag %p for mapping' % value.tag
         end
       end
 
@@ -146,7 +147,7 @@ module Travis::Yaml
         when SECURE    then node.visit_scalar self, :secure, value, value.tag.nil?
         when NULL      then node.visit_scalar self, :null,   value, value.tag.nil?
         when REGEXP    then node.visit_scalar self, :regexp, value, value.tag.nil?
-        else node.visit_unexpected self, value, "unexpected tag %p for scalar %p" % [tag, simple(value)]
+        else node.visit_unexpected self, value, format('unexpected tag %p for scalar %p', tag, simple(value))
         end
       end
 
@@ -163,14 +164,15 @@ module Travis::Yaml
 
       def simple_mapping(value)
         children     = {}
-        keys, values = value.children.group_by.with_index { |_,i| i.even? }.values_at(true, false)
-        keys.zip(values) { |key, value| children[simple(key)] = simple(value) } if keys and values
+        keys, values = value.children.group_by.with_index { |_, i| i.even? }.values_at(true, false)
+        keys.zip(values) { |key, value| children[simple(key)] = simple(value) } if keys && values
         children
       end
 
       def scalar_tag(value)
         return value.tag if value.tag
         return '!str' if value.quoted
+
         FORMATS.each do |tag, format|
           return tag if value.value =~ format
         end
@@ -180,16 +182,17 @@ module Travis::Yaml
       def regexp(pattern)
         return pattern if pattern.is_a? Regexp
         return Regexp.new(pattern) unless pattern =~ FORMATS['!regexp']
-        flag = $2.chars.inject(0) { |f,c| f | REG_FLAGS.fetch(c, 0) }
-        Regexp.new($1, flag)
-      rescue RegexpError => error
-        raise ArgumentError, "broken regular expression - #{error.message}"
+
+        flag = Regexp.last_match(2).chars.inject(0) { |f, c| f | REG_FLAGS.fetch(c, 0) }
+        Regexp.new(Regexp.last_match(1), flag)
+      rescue RegexpError => e
+        raise ArgumentError, "broken regular expression - #{e.message}"
       end
 
       def cast(type, value)
         case type
         when :str    then value.value
-        when :binary then value.value.unpack('m').first
+        when :binary then value.value.unpack1('m')
         when :bool   then value.value !~ FALSE
         when :float  then Float   @scanner.tokenize(value.value)
         when :int    then Integer @scanner.tokenize(value.value)
@@ -202,8 +205,8 @@ module Travis::Yaml
       end
 
       def apply_mapping(node, value)
-        keys, values = value.children.group_by.with_index { |_,i| i.even? }.values_at(true, false)
-        keys.zip(values) { |key, value| node.visit_pair(self, key, value) } if keys and values
+        keys, values = value.children.group_by.with_index { |_, i| i.even? }.values_at(true, false)
+        keys.zip(values) { |key, value| node.visit_pair(self, key, value) } if keys && values
       end
 
       def apply_sequence(node, value)
@@ -211,11 +214,11 @@ module Travis::Yaml
       end
 
       def generate_key(node, value)
-        if value.respond_to? :value and (value.tag.nil? || value.tag == STR)
+        if value.respond_to?(:value) && (value.tag.nil? || value.tag == STR)
           value = value.value.to_s
-          value.start_with?(?:) ? value[1..-1] : value
+          value.start_with?(':') ? value[1..-1] : value
         else
-          node.visit_unexpected(self, value, "expected string as key")
+          node.visit_unexpected(self, value, 'expected string as key')
         end
       end
     end

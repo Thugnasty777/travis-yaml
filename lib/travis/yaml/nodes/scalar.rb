@@ -33,7 +33,7 @@ module Travis::Yaml
       end
 
       attr_accessor :value
-      alias_method :__getobj__, :value
+      alias __getobj__ value
 
       def empty?
         value.nil?
@@ -61,7 +61,8 @@ module Travis::Yaml
       def visit_scalar(visitor, type, value, implicit = true)
         return self.value = cast(visitor, type,         value) if cast? type
         return self.value = cast(visitor, default_type, value) if implicit
-        error "%p not supported, dropping %p", type.to_s, cast(visitor, :str, value)
+
+        error '%p not supported, dropping %p', type.to_s, cast(visitor, :str, value)
       end
 
       def visit_sequence(visitor, value)
@@ -71,8 +72,12 @@ module Travis::Yaml
 
       def visit_child(visitor, value)
         if @multiple
-          value = cast(visitor, :str, value) rescue value
-          warning "does not support multiple values, dropping %p", value
+          value = begin
+            cast(visitor, :str, value)
+          rescue StandardError
+            value
+          end
+          warning 'does not support multiple values, dropping %p', value
         else
           @multiple = true
           visitor.accept(self, value)
@@ -81,8 +86,8 @@ module Travis::Yaml
 
       def cast(visitor, type, value)
         visitor.cast(type, value)
-      rescue ArgumentError => error
-        error "failed to parse %p - %s", type.to_s, error.message.sub("():", ":")
+      rescue ArgumentError => e
+        error 'failed to parse %p - %s', type.to_s, e.message.sub('():', ':')
       end
 
       def cast?(type)
@@ -95,6 +100,7 @@ module Travis::Yaml
 
       def with_value(value)
         return value.dup if value.is_a? self.class
+
         value = value.value while value.is_a? Scalar
         super(value)
       end
@@ -105,7 +111,8 @@ module Travis::Yaml
 
       def each_scalar(type = nil, &block)
         return enum_for(:each_scalar, type) unless block
-        yield value if type.nil? or type === value
+
+        yield value if type.nil? || (type === value)
       end
     end
   end

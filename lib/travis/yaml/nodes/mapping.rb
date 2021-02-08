@@ -22,7 +22,7 @@ module Travis::Yaml
       end
 
       def self.map(*list)
-        options = Hash === list.last ? list.pop : {}
+        options = list.last.is_a?(Hash) ? list.pop : {}
         list.each do |key|
           drop_empty   << key.to_s if options.fetch(:drop_empty, true)
           required     << key.to_s if options[:required]
@@ -57,8 +57,9 @@ module Travis::Yaml
         @prefix_scalar ||= superclass.respond_to?(:prefix_scalar) ? superclass.prefix_scalar : nil
         if key
           @prefix_scalar = key.to_s
-          define_method(:visit_scalar) do |visitor, type, value, implicit = true|
-            return super(visitor, type, value, implicit = true) if types.any? and not types.include?(type)
+          define_method(:visit_scalar) do |visitor, type, value, _implicit = true|
+            return super(visitor, type, value, implicit = true) if types.any? && !types.include?(type)
+
             visit_key_value(visitor, key, value)
           end
         end
@@ -66,9 +67,9 @@ module Travis::Yaml
       end
 
       def self.define_map_accessor(key)
-        define_method(key)       { | | self[key]       } unless method_defined? key
-        define_method("#{key}=") { |v| self[key] = v   } unless method_defined? "#{key}="
-        define_method("#{key}?") { | | !!self[key]     } unless method_defined? "#{key}?"
+        define_method(key)       { self[key]       } unless method_defined? key
+        define_method("#{key}=") { |v| self[key] = v } unless method_defined? "#{key}="
+        define_method("#{key}?") { !!self[key]     } unless method_defined? "#{key}?"
       end
 
       def self.subnode_for(key)
@@ -76,7 +77,7 @@ module Travis::Yaml
       end
 
       attr_reader :mapping
-      alias_method :__getobj__, :mapping
+      alias __getobj__ mapping
 
       def prepare
         @mapping = {}
@@ -93,8 +94,9 @@ module Travis::Yaml
       end
 
       def visit_key_value(visitor, key, value)
-        return warning("unexpected key %p, dropping", key) unless node = subnode_for(key)
-        warning("has multiple %p entries, keeping last entry", key) if self[key]
+        return warning('unexpected key %p, dropping', key) unless node = subnode_for(key)
+
+        warning('has multiple %p entries, keeping last entry', key) if self[key]
         self[key] = node
         visitor.accept(node, value)
       end
@@ -111,7 +113,7 @@ module Travis::Yaml
           end
           @mapping[mapped_key] = value
         else
-          warning("unexpected key %p, dropping", key)
+          warning('unexpected key %p, dropping', key)
         end
       end
 
@@ -147,7 +149,7 @@ module Travis::Yaml
 
       def ==(other)
         other = other.mapping if other.is_a? Mapping
-        if other.respond_to? :to_hash and other.to_hash.size == @mapping.size
+        if other.respond_to?(:to_hash) && (other.to_hash.size == @mapping.size)
           other.to_hash.all? { |k, v| include?(k) and self[k] == v }
         else
           false
@@ -165,13 +167,15 @@ module Travis::Yaml
       def verify_experimental
         self.class.experimental.each do |key|
           next unless @mapping.include? key
-          warning "%p is experimental and might be removed in the future", key
+
+          warning '%p is experimental and might be removed in the future', key
         end
       end
 
       def verify_empty
         @mapping.delete_if do |key, value|
-          next unless drop_empty? key and value.empty?
+          next unless drop_empty?(key) && value.empty?
+
           value.nested_warnings.each { |p, w| nested_warning(w, key, *p) }
           warning('value for %p section is empty, dropping', key)
           true
@@ -181,12 +185,13 @@ module Travis::Yaml
       def verify_required
         self.class.required.each do |key|
           next if @mapping.include? key
+
           type = self.class.subnode_for(key)
           if type.has_default?
-            warning "missing key %p, defaulting to %p", key, type.default
+            warning 'missing key %p, defaulting to %p', key, type.default
             @mapping[key] = type.new(self)
           else
-            error "missing key %p", key
+            error 'missing key %p', key
           end
         end
       end
@@ -194,7 +199,7 @@ module Travis::Yaml
       def verify_errors
         @mapping.delete_if do |key, value|
           if value.errors?
-            warning "dropping %p section: %s", key, value.errors.join(', ')
+            warning 'dropping %p section: %s', key, value.errors.join(', ')
             true
           end
         end
@@ -218,16 +223,17 @@ module Travis::Yaml
 
       def each_scalar(type = nil, &block)
         return enum_for(:each_scalar, type) unless block
+
         @mapping.each_value { |v| v.each_scalar(type, &block) }
       end
 
       protected
 
-        def dup_values
-          duped_mapping = @mapping.map { |key, value| [key.dup, value.dup] }
-          @mapping      = Hash[duped_mapping]
-          self
-        end
+      def dup_values
+        duped_mapping = @mapping.map { |key, value| [key.dup, value.dup] }
+        @mapping      = Hash[duped_mapping]
+        self
+      end
     end
   end
 end

@@ -3,7 +3,7 @@ module Travis::Yaml
     class OSEntry < FixedValue
       MISSING = {
         # see https://github.com/travis-ci/travis-ci/issues/2320
-        'osx'   => %w[node_js python php perl erlang groovy clojure scala go haskell],
+        'osx' => %w[node_js python php perl erlang groovy clojure scala go haskell],
         'linux' => ['objective-c']
       }
 
@@ -14,6 +14,7 @@ module Travis::Yaml
 
       def supports_language?(language)
         return false unless missing = MISSING[value]
+
         !missing.include?(language)
       end
     end

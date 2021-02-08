@@ -9,6 +9,7 @@ module Travis::Yaml
         def ==(other)
           return true if super
           return false unless branch_specific?
+
           generic == other
         end
 
@@ -35,7 +36,8 @@ module Travis::Yaml
         def verify_branch(name)
           branches.each do |branch|
             next if branch.to_s == name.to_s
-            warning "branch %p not permitted by deploy condition, dropping", branch
+
+            warning 'branch %p not permitted by deploy condition, dropping', branch
             @mapping.delete(branch)
           end
         end
@@ -48,7 +50,7 @@ module Travis::Yaml
       map :on, to: DeployConditions
 
       def verify
-        @mapping.each_value { |v| v.verify_branch(on.branch) if v.respond_to? :verify_branch } if on and on.branch
+        @mapping.each_value { |v| v.verify_branch(on.branch) if v.respond_to? :verify_branch } if on && on.branch
         super
       end
     end
