@@ -3,8 +3,8 @@ describe Travis::Yaml::Nodes::Root do
     subject.warnings
   end
 
-  describe "from YAML" do
-    context "sudo" do
+  describe 'from YAML' do
+    context 'sudo' do
       subject :yaml do
         Travis::Yaml.parse <<-YAML.gsub(/^ {10}/, '')
           language: ruby
@@ -12,12 +12,12 @@ describe Travis::Yaml::Nodes::Root do
         YAML
       end
 
-      specify "gives no warnings" do
+      specify 'gives no warnings' do
         expect(warnings).to be_empty
       end
     end
 
-    context "double entry" do
+    context 'double entry' do
       subject :yaml do
         Travis::Yaml.parse <<-YAML.gsub(/^ {10}/, '')
           addons:
@@ -28,7 +28,7 @@ describe Travis::Yaml::Nodes::Root do
         YAML
       end
 
-      specify "warns about double entries" do
+      specify 'warns about double entries' do
         expect(warnings).to include('has multiple "addons" entries, keeping last entry')
       end
     end

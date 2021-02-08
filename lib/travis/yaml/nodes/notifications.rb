@@ -23,6 +23,7 @@ module Travis::Yaml
 
         def visit_scalar(visitor, type, value, implicit = true)
           return super unless type == :bool
+
           visit_key_value(visitor, :enabled, value)
         end
 
@@ -62,6 +63,7 @@ module Travis::Yaml
           @children.each do |child|
             child.to_s.scan(/%{([^}]+)}/) do |match|
               next if VARIABLES.include? match.first
+
               warning 'unknown "template" variable %p', match.first
             end
           end

@@ -1,8 +1,8 @@
 describe Travis::Yaml do
   specify :parse! do
-    expect(Travis::Yaml).to receive(:warn).
-      with('.travis.yml: missing key "language", defaulting to "ruby"')
-    Travis::Yaml.parse! ""
+    expect(Travis::Yaml).to receive(:warn)
+      .with('.travis.yml: missing key "language", defaulting to "ruby"')
+    Travis::Yaml.parse! ''
   end
 
   specify :parse do
@@ -33,17 +33,17 @@ describe Travis::Yaml do
 
   context :with_value do
     subject(:config) { Travis::Yaml.parse(rvm: ['jruby', '2.0.0'], language: :ruby) }
-    
-    example "with_value for language" do
+
+    example 'with_value for language' do
       changed = config.with_value(language: :php)
-      expect(changed.language) .to be == "php"
-      expect(config.language)  .to be == "ruby"
+      expect(changed.language).to be == 'php'
+      expect(config.language).to be == 'ruby'
     end
 
-    example "with_value for rvm" do
+    example 'with_value for rvm' do
       changed = config.with_value(rvm: :jruby)
-      expect(changed.rvm) .to be == "jruby"
-      expect(config.rvm)  .to be == ['jruby', '2.0.0']
+      expect(changed.rvm).to be == 'jruby'
+      expect(config.rvm).to be == ['jruby', '2.0.0']
     end
   end
 end

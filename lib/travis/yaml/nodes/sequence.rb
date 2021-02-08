@@ -2,7 +2,7 @@ module Travis::Yaml
   module Nodes
     class Sequence < Node
       attr_reader :children
-      alias_method :__getobj__, :children
+      alias __getobj__ children
 
       def self.[](node_type)
         node_type = Scalar[node_type] unless node_type.is_a? Node
@@ -22,7 +22,7 @@ module Travis::Yaml
         visitor.apply_sequence(self, value)
       end
 
-      def visit_scalar(visitor, type, value, implicit = true)
+      def visit_scalar(visitor, type, value, _implicit = true)
         visit_child(visitor, value) if type != :null
       end
 
@@ -44,7 +44,7 @@ module Travis::Yaml
 
       def ==(other)
         other = other.children if other.is_a? Sequence
-        if other.respond_to? :to_a and other.to_a.size == children.size
+        if other.respond_to?(:to_a) && (other.to_a.size == children.size)
           children.zip(other.to_a).all? { |a, b| a == b }
         else
           identifier == other
@@ -75,6 +75,7 @@ module Travis::Yaml
       def verify_children
         @children.delete_if do |child|
           next unless child.errors?
+
           child.errors.each { |message| warning(message) }
           true
         end
@@ -87,11 +88,13 @@ module Travis::Yaml
 
       def each_scalar(type = nil, &block)
         return enum_for(:each_scalar, type) unless block
+
         @children.each { |c| c.each_scalar(type, &block) }
       end
 
       def with_value(value)
         return value.dup if value.is_a? self.class
+
         value = value.children if value.is_a? Sequence
         value = value.value while value.is_a? Scalar
         Parser::Ruby.new(Array(value)).parse self.class.new(parent)
@@ -113,10 +116,10 @@ module Travis::Yaml
 
       protected
 
-        def dup_values
-          @children = @children.map { |child| child.dup }
-          self
-        end
+      def dup_values
+        @children = @children.map { |child| child.dup }
+        self
+      end
     end
   end
 end

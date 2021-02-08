@@ -9,8 +9,10 @@ module Travis::Yaml
 
     def self.[](key)
       return key if key.respond_to? :serialize
+
       name = constants.detect { |c| c.downcase == key }
-      raise ArgumentError, "unknown serializer %p" % key unless name
+      raise ArgumentError, 'unknown serializer %p' % key unless name
+
       const_get(name)
     end
   end

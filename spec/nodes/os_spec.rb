@@ -9,8 +9,8 @@ describe Travis::Yaml::Nodes::OS do
   end
 
   specify 'supports aliases' do
-    config = Travis::Yaml.parse(os: [:ubuntu, :mac], language: 'ruby')
-    expect(config.os).to be == ['linux', 'osx']
+    config = Travis::Yaml.parse(os: %i[ubuntu mac], language: 'ruby')
+    expect(config.os).to be == %w[linux osx]
   end
 
   specify 'unsupported values' do
@@ -28,9 +28,9 @@ describe Travis::Yaml::Nodes::OS do
 
   specify 'complains about jdk on osx' do
     config = Travis::Yaml.parse(os: :osx, language: :java, jdk: :default)
-    expect(config.os)       .to be == ['osx']
-    expect(config.language) .to be == 'java'
-    expect(config.jdk)      .to be_nil
+    expect(config.os).to be == ['osx']
+    expect(config.language).to be == 'java'
+    expect(config.jdk).to be_nil
     expect(config.warnings).to include('dropping "jdk" section: currently not supported on "osx"')
   end
 

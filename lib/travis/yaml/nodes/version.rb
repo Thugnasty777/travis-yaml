@@ -11,8 +11,9 @@ module Travis::Yaml
       end
 
       def value=(value)
-        return super unless value and value.to_s !~ self.class.format
-        error "value %p is not a valid version", value.to_s
+        return super unless value && value.to_s !~ (self.class.format)
+
+        error 'value %p is not a valid version', value.to_s
       end
     end
   end

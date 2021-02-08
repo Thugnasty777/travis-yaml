@@ -16,7 +16,7 @@ module Travis::Yaml
       end
 
       def serialize(node)
-        case node 
+        case node
         when Nodes::Root     then serialize_root(node)
         when Nodes::Scalar   then serialize_scalar(node)
         when Nodes::Mapping  then serialize_mapping(node)
@@ -25,7 +25,7 @@ module Travis::Yaml
         end
       end
 
-      def serialize_scalar(node)        
+      def serialize_scalar(node)
         case value = node.value
         when true, false  then serialize_bool(value)
         when Float        then serialize_float(value)
@@ -55,13 +55,22 @@ module Travis::Yaml
       def serialize_secure(value)
         case options[:secure]
         when :decrypted
-          raise ArgumentError, 'secure option is set decrypted, but a secure value is not decrypted' unless value.decrypted?
+          unless value.decrypted?
+            raise ArgumentError,
+                  'secure option is set decrypted, but a secure value is not decrypted'
+          end
+
           serialize_decrypted(value)
         when :encrypted
-          raise ArgumentError, 'secure option is set encrypted, but a secure value is not encrypted' unless value.encrypted?
+          unless value.encrypted?
+            raise ArgumentError,
+                  'secure option is set encrypted, but a secure value is not encrypted'
+          end
+
           serialize_encrypted(value)
         else
           raise ArgumentError, 'unexpected value for secure option: %p' % options[:secure] if options[:secure]
+
           value.encrypted? ? serialize_encrypted(value) : serialize_decrypted(value)
         end
       end
@@ -90,8 +99,8 @@ module Travis::Yaml
         serialize_value(value)
       end
 
-      def serialize_value(value)
-        raise NotSupportedError, 'cannot serialize %p with %p' % [node.class, self.class]
+      def serialize_value(_value)
+        raise NotSupportedError, format('cannot serialize %p with %p', node.class, self.class)
       end
 
       def serialize_root(node)

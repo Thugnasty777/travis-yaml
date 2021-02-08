@@ -3,7 +3,7 @@ module Travis::Yaml
     class Addons < Mapping
       class Addon < Mapping
         def self.[](*keys)
-          Class.new(self) { map(*keys, to: Scalar[:str, :secure])}
+          Class.new(self) { map(*keys, to: Scalar[:str, :secure]) }
         end
 
         def visit_scalar(visitor, type, value, implicit = true)
@@ -18,7 +18,7 @@ module Travis::Yaml
 
         map :project, to: Project
         map :build_script_url, :branch_pattern, :notification_email, :build_command,
-          :build_command_prepend, to: Scalar[:str, :secure]
+            :build_command_prepend, to: Scalar[:str, :secure]
       end
 
       class Artifacts < Addon
